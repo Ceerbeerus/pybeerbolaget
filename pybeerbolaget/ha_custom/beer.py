@@ -1,4 +1,5 @@
-﻿from pybeerbolaget.ha_custom import common
+﻿import json
+from pybeerbolaget.ha_custom import common
 
 class beer_handler():
     def __init__(self, api_key, show_beer):
