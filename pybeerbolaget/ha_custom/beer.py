@@ -10,7 +10,8 @@ class beer_handler():
     async def update_new_beers(self):
         if not self.release:
             beer_available = await common.get_beverage(self.api_key, 'Öl')
-        self.release = beer_available[-1]['SellStartDate']
+        if len(beer_available) > 0:
+            self.release = beer_available[-1]['SellStartDate']
         for beer_item in beer_available:
             if beer_item['SellStartDate'] == self.release:
                 new_beer = beer('beer', beer_item['ProducerName'], beer_item['ProductNameBold'], beer_item['ProductNameThin'],
