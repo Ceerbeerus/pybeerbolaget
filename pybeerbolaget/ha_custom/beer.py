@@ -20,7 +20,10 @@ class beer_handler():
                 self.beers.append(new_beer)
     
     async def get_beers(self):
-        return json.dumps(self.beers.__dict__)
+        beers = []
+        for beer in self.beers:
+            beers.append(beer.__dict__)
+        return json.dumps(beers)
 
     async def get_release(self):
         return self.release
