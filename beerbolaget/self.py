@@ -8,7 +8,7 @@ import requests
 def update():
     """Update this package."""
     version = get_pypi_version()
-    packageversion = 'pybeerbolaget' + version
+    packageversion = 'beerbolaget' + version
     subprocess.call([sys.executable,
                      "-m",
                      "pip",
