@@ -1,4 +1,4 @@
-﻿# pybeerbolaget
+﻿# beerbolaget
 
 _A python package to get information about the latest beer available at Systembolaget in Sweden._
 
