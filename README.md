@@ -4,4 +4,4 @@ _A python package to get information about the latest beer available at Systembo
 
 Documentation:
 
-https://github.com/Ceerbeerus/beerbolaget
+https://github.com/Ceerbeerus/pybeerbolaget
