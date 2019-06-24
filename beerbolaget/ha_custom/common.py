@@ -4,25 +4,8 @@ import urllib.parse
 import requests
 
 
-async def get_latest_release(api_key, type='Öl'):
-    SellStartDateFrom = date.today() - timedelta(days=31)
-    SellStartDateTo = date.today() + timedelta(days=31)
-
-    latest = None
-    params = urllib.parse.urlencode({
-        # Request parameters
-        'SubCategory': type,
-        'AssortmentText': 'Små partier',
-        'SellStartDateFrom': SellStartDateFrom,
-        'SellStartDateTo': SellStartDateTo,
-    })
-    beverages = await make_request(api_key, params)
-    if len(beverages) > 0:
-        latest = beverages[-1]['SellStartDate']
-    return latest
-
-
 async def get_beverage(api_key, release_date, type='Öl'):
+    url = 'https://api-extern.systembolaget.se/product/v1/product/search?%s'
     params = urllib.parse.urlencode({
         # Request parameters
         'SubCategory': type,
@@ -30,23 +13,57 @@ async def get_beverage(api_key, release_date, type='Öl'):
         'SellStartDateFrom': release_date,
         'SellStartDateTo': release_date,
     })
-    beverages = await make_request(api_key, params)
+    beverages = await make_request(api_key, url, params)
     return beverages
 
 
-async def make_request(api_key, params):
+async def get_latest_release(api_key, type='Öl'):
+    SellStartDateFrom = date.today() - timedelta(days=31)
+    SellStartDateTo = date.today() + timedelta(days=31)
+
+    latest = None
+    url = 'https://api-extern.systembolaget.se/product/v1/product/search?%s'
+    params = urllib.parse.urlencode({
+        # Request parameters
+        'SubCategory': type,
+        'AssortmentText': 'Små partier',
+        'SellStartDateFrom': SellStartDateFrom,
+        'SellStartDateTo': SellStartDateTo,
+    })
+    beverages = await make_request(api_key, url, params)
+    if len(beverages) > 0:
+        beverages = sorted(beverages, key=lambda k: k['SellStartDate'])
+        latest = beverages[-1]['SellStartDate']
+    return latest
+
+
+async def get_store_id(api_key, store_name):
+    store_id = ''
+    url = 'https://api-extern.systembolaget.se/site/v1/site/search?%s'
+    params = urllib.parse.urlencode({
+        # Request parameters
+        'SearchQuery': store_name
+    })
+    store = await make_request(api_key, url, params)
+    if len(store) > 0:
+        for s in store:
+            if store_name.lower() in s['DisplayName'].lower():
+                store_id = s['SiteId']
+    return store_id
+
+
+async def make_request(api_key, url, params):
     headers = {
         'Ocp-Apim-Subscription-Key': api_key,
         'content-type': 'application/json'
     }
 
-    all_beverages = []
+    resp = []
     try:
-        all_beverages = requests.get(
-            'https://api-extern.systembolaget.se/product/v1/product/search?%s' % params,
+        resp = requests.get(
+            url % params,
             headers=headers, verify=True).json()['Hits']
-        all_beverages = sorted(all_beverages, key=lambda k: k['SellStartDate'])
     except Exception as e:
         print("Could not fetch data from api ({})".format(e))
 
-    return all_beverages
+    return resp

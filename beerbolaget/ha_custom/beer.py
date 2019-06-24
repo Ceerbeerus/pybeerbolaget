@@ -1,29 +1,42 @@
-﻿from datetime import datetime
-import json
+﻿import json
 from beerbolaget.ha_custom import common
 
 
 class beer_handler():
-    def __init__(self, api_key, ratebeer, untappd):
+    def __init__(self, api_key, ratebeer, store, untappd):
         self.api_key = api_key
         self.ratebeer = ratebeer
+        self.store_name = store
+        self.store_id = None
         self.untappd = untappd
         self.beers = {}
         self.release = None
+
+    async def get_store_info(self):
+        if self.store_name:
+            self.store_id = await common.get_store_id(self.api_key,
+                                                      self.store_name)
 
     async def update_new_beers(self):
         self.release = await common.get_latest_release(self.api_key)
 
         if self.release:
-            beer_available = await common.get_beverage(self.api_key, self.release)
-            for beer_item in beer_available:
-                new_beer = beer(beer_item['ProducerName'],
-                                beer_item['ProductNameBold'],
-                                beer_item['ProductNameThin'],
-                                beer_item['Type'],
-                                beer_item['Price'],
-                                beer_item['Country'])
-                self.beers[beer_item['ProductId']] = new_beer
+            beer_available = await common.get_beverage(self.api_key,
+                                                       self.release)
+            for item in beer_available:
+                available_in_store = False
+                if (self.store_id and
+                        self.store_id in item['IsInStoreSearchAssortment']):
+                    available_in_store = True
+                new_beer = beer(available_in_store,
+                                item['ProducerName'],
+                                item['ProductNameBold'],
+                                item['ProductNameThin'],
+                                item['Type'],
+                                item['Price'],
+                                item['Country'],
+                                show_availability=(self.store_id is not None))
+                self.beers[item['ProductId']] = new_beer
 
     async def get_beers(self):
         beers = []
@@ -36,9 +49,9 @@ class beer_handler():
 
 
 class beer():
-    def __init__(self, brewery, name, detailed_name, type, price, country, show_availability=False):
-        self.availability_local = 0
-        self.availability_web = 0
+    def __init__(self, availability_local, brewery, name, detailed_name,
+                 type, price, country, show_availability=False):
+        self.availability_local = availability_local
         self.brewery = brewery
         self.name = name
         self.detailed_name = detailed_name
