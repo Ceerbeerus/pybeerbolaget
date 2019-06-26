@@ -18,6 +18,7 @@ async def get_beverage(api_key, release_date, type='Öl'):
 
 
 async def get_images(release_date, image_url, type='Öl'):
+    url = image_url + '/?%s'
     headers = {
         'content-type': 'application/json'
     }
@@ -31,7 +32,7 @@ async def get_images(release_date, image_url, type='Öl'):
     images = []
     try:
         images = requests.get(
-            image_url % params,
+            url % params,
             headers=headers, verify=True).json()['ProductSearchResults']
     except Exception as e:
         print("Could not fetch images:  ({})".format(e))
