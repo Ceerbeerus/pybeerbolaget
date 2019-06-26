@@ -3,14 +3,15 @@ from beerbolaget.ha_custom import common
 
 
 class beer_handler():
-    def __init__(self, api_key, ratebeer, store, untappd):
+    def __init__(self, api_key, image_url, ratebeer, store, untappd):
         self.api_key = api_key
+        self.beers = {}
+        self.image_url = image_url
         self.ratebeer = ratebeer
+        self.release = None
         self.store_name = store
         self.store_id = None
         self.untappd = untappd
-        self.beers = {}
-        self.release = None
 
     async def get_store_info(self):
         if self.store_name:
@@ -38,6 +39,13 @@ class beer_handler():
                                 show_availability=(self.store_id is not None))
                 self.beers[item['ProductId']] = new_beer
 
+    async def get_images(self):
+        if self.image_url and len(self.beers) > 0:
+            images = await common.get_images(self.release, self.image_url)
+            for beer in self.beers:
+                if beer in images:
+                    self.beers[beer].image = images[beer]['ImageUrl']
+
     async def get_beers(self):
         beers = []
         for beer in self.beers:
@@ -53,10 +61,11 @@ class beer():
                  type, price, country, show_availability=False):
         self.availability_local = availability_local
         self.brewery = brewery
-        self.name = name
-        self.detailed_name = detailed_name
-        self.type = type
-        self.price = price
         self.country = country
+        self.detailed_name = detailed_name
+        self.image = None
+        self.name = name
+        self.price = price
         self.rating = None
         self.show_availability = show_availability
+        self.type = type

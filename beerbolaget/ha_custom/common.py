@@ -17,6 +17,32 @@ async def get_beverage(api_key, release_date, type='Öl'):
     return beverages
 
 
+async def get_images(release_date, image_url, type='Öl'):
+    headers = {
+        'content-type': 'application/json'
+    }
+    params = urllib.parse.urlencode({
+        # Request parameters
+        'SubCategory': type,
+        'AssortmentText': 'Små partier',
+        'SellStartDateFrom': release_date,
+        'SellStartDateTo': release_date,
+    })
+    images = []
+    try:
+        images = requests.get(
+            image_url % params,
+            headers=headers, verify=True).json()['ProductSearchResults']
+    except Exception as e:
+        print("Could not fetch images:  ({})".format(e))
+
+    image_urls = {}
+    if len(images) > 0:
+        for i in images:
+            image_urls[i['ProductId']] = i['Thumbnail']
+    return image_urls
+
+
 async def get_latest_release(api_key, type='Öl'):
     SellStartDateFrom = date.today() - timedelta(days=31)
     SellStartDateTo = date.today() + timedelta(days=31)
@@ -64,6 +90,6 @@ async def make_request(api_key, url, params):
             url % params,
             headers=headers, verify=True).json()['Hits']
     except Exception as e:
-        print("Could not fetch data from api ({})".format(e))
+        print("Could not fetch data from api:  ({})".format(e))
 
     return resp
