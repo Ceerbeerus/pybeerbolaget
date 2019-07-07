@@ -17,7 +17,6 @@ class untappd_handle():
             brewery = brewery.split(' ')[0]
         else:
             brewery = brewery.split(' ')[1]
-
         if detailed_name:
             detailed_name = detailed_name.lower()
         beer_name = name
