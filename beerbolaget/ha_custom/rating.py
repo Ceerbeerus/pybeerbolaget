@@ -33,7 +33,6 @@ class untappd_handle():
 
     async def get_beer_id(self, brewery, name):
         url = 'https://api.untappd.com/v4/search/beer?%s'
-
         params = urllib.parse.urlencode({
             'client_id': self.client_id,
             'client_secret': self.client_secret,
