@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="beerbolaget",
-    version='0.0.36b7',
+    version='0.0.37b0',
     author="Robert Kallin",
     author_email="kallin.roberts@gmail.com",
     description="A python package to get information about the latest beer available at Systembolaget.",

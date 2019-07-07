@@ -1,9 +1,10 @@
 ﻿import json
-from beerbolaget.ha_custom import common
+from beerbolaget.ha_custom import common, rating
 
 
 class beer_handler():
-    def __init__(self, api_key, image_url, ratebeer, store, untappd):
+    def __init__(self, api_key, image_url, ratebeer, store,
+                 untappd_client, untappd_secret):
         self.api_key = api_key
         self.beers = {}
         self.image_url = image_url
@@ -11,7 +12,8 @@ class beer_handler():
         self.release = None
         self.store_name = store
         self.store_id = None
-        self.untappd = untappd
+        self.untappd_handle = rating.untappd_handle(untappd_client,
+                                                    untappd_secret)
 
     async def get_store_info(self):
         if self.store_name:
@@ -46,6 +48,17 @@ class beer_handler():
                 if beer in images:
                     self.beers[beer].image = images[beer]['ImageUrl']
 
+    async def get_ratings(self):
+        if self.untappd_handle.client_id and len(self.beers) > 0:
+            for beer in self.beers:
+                brewery = self.beers[beer].brewery
+                name = self.beers[beer].name
+                detailed_name = self.beers[beer].detailed_name
+                self.beers[beer].untappd_rating = (
+                    await self.untappd_handle.get_rating(brewery,
+                                                         name,
+                                                         detailed_name))
+
     async def get_beers(self):
         beers = []
         for beer in self.beers:
@@ -66,6 +79,6 @@ class beer():
         self.image = None
         self.name = name
         self.price = price
-        self.rating = None
+        self.untappd_rating = None
         self.show_availability = show_availability
         self.type = type
