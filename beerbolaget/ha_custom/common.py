@@ -64,19 +64,21 @@ async def get_latest_release(api_key, type='Öl'):
     return latest
 
 
-async def get_store_id(api_key, store_name):
-    store_id = ''
+async def get_store_info(api_key, chosen_store):
+    store_id = None
+    store_name = None
     url = 'https://api-extern.systembolaget.se/site/v1/site/search?%s'
     params = urllib.parse.urlencode({
         # Request parameters
-        'SearchQuery': store_name
+        'SearchQuery': chosen_store
     })
     store = await make_request(api_key, url, params)
     if len(store) > 0:
         for s in store:
-            if store_name.lower() in s['DisplayName'].lower():
+            if chosen_store.lower() in s['DisplayName'].lower():
                 store_id = s['SiteId']
-    return store_id
+                store_name = s['Name']
+    return (store_id, store_name)
 
 
 async def make_request(api_key, url, params):
