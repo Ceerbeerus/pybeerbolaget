@@ -34,6 +34,7 @@ class beer_handler():
                     available_in_store = True
                 new_beer = beer(available_in_store,
                                 item['ProducerName'],
+                                item['ProductId'],
                                 item['ProductNameBold'],
                                 item['ProductNameThin'],
                                 item['Type'],
@@ -73,12 +74,13 @@ class beer_handler():
         return self.store_name
 
 class beer():
-    def __init__(self, availability_local, brewery, name, detailed_name,
+    def __init__(self, availability_local, brewery, id, name, detailed_name,
                  type, price, country, show_availability=False):
         self.availability_local = availability_local
         self.brewery = brewery
         self.country = country
         self.detailed_name = detailed_name
+        self.id = id
         self.image = None
         self.name = name
         self.price = price
