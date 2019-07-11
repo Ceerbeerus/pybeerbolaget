@@ -69,6 +69,8 @@ class beer_handler():
     async def get_release(self):
         return self.release.split('T')[0]
 
+    async def get_store(self):
+        return self.store_name
 
 class beer():
     def __init__(self, availability_local, brewery, name, detailed_name,
