@@ -7,18 +7,19 @@ class beer_handler():
                  untappd_client, untappd_secret):
         self.api_key = api_key
         self.beers = {}
+        self.chosen_store = store
         self.image_url = image_url
         self.ratebeer = ratebeer
         self.release = None
-        self.store_name = store
+        self.store_name = None
         self.store_id = None
         self.untappd_handle = rating.untappd_handle(untappd_client,
                                                     untappd_secret)
 
     async def get_store_info(self):
-        if self.store_name:
+        if self.chosen_store:
             self.store_id = await common.get_store_id(self.api_key,
-                                                      self.store_name)
+                                                      self.chosen_store)
 
     async def update_new_beers(self):
         self.release = await common.get_latest_release(self.api_key)
