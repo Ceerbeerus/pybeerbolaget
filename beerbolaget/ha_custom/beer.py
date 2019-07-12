@@ -18,8 +18,9 @@ class beer_handler():
 
     async def get_store_info(self):
         if self.chosen_store:
-            self.store_id, self.store_name = await common.get_store_info(self.api_key,
-                                                                         self.chosen_store)
+            (self.store_id,
+             self.store_name) = await common.get_store_info(self.api_key,
+                                                            self.chosen_store)
 
     async def update_new_beers(self):
         self.release = await common.get_latest_release(self.api_key)
@@ -34,7 +35,7 @@ class beer_handler():
                     available_in_store = True
                 new_beer = beer(available_in_store,
                                 item['ProducerName'],
-                                item['ProductId'],
+                                item['ProductNumber'],
                                 item['ProductNameBold'],
                                 item['ProductNameThin'],
                                 item['Type'],
@@ -72,6 +73,7 @@ class beer_handler():
 
     async def get_store(self):
         return self.store_name
+
 
 class beer():
     def __init__(self, availability_local, brewery, id, name, detailed_name,
