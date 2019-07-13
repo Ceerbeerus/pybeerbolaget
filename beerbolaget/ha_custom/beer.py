@@ -66,6 +66,7 @@ class beer_handler():
         beers = []
         for beer in self.beers:
             beers.append(self.beers[beer].__dict__)
+        beers = sorted(beers, key=lambda k: k['id'])
         return json.dumps(beers, ensure_ascii=False)
 
     async def get_release(self):
