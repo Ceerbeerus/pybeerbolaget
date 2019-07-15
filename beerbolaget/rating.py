@@ -27,9 +27,12 @@ class untappd_handle():
         beer_id = await self.get_beer_id(brewery, beer_name)
         if not beer_id and len(beer_name.split(' ')) > 1:
             beer_name = beer_name.split(' ')
-            if (beer_name[0] == 'the' or len(beer_name[0]) < 3 or
-                brewery in beer_name[0]):
-                beer_name = beer_name[1]
+            if (beer_name[0] == 'the' or len(beer_name[0]) < 4 or
+                    brewery in beer_name[0]):
+                if len(beer_name) > 2 and len(beer_name[1]) < 4:
+                    beer_name = beer_name[2]
+                else:
+                    beer_name = beer_name[1]
             else:
                 beer_name = beer_name[0]
             beer_id = await self.get_beer_id(brewery, beer_name)
@@ -58,8 +61,8 @@ class untappd_handle():
                 neg_matches = ([x for x in beer['beer']['beer_name'].split()
                                 if x.lower() not in name])
                 if (brewery in beer['brewery']['brewery_name'] and
-                    len(matches) > best_match_count and
-                    len(neg_matches) < best_match_negativ_count):
+                        len(matches) > best_match_count and
+                        len(neg_matches) < best_match_negativ_count):
                     best_match_count = len(matches)
                     best_match_negativ_count = len(neg_matches)
                     best_match_id = beer['beer']['bid']
