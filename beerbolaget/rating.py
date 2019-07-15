@@ -50,6 +50,7 @@ class untappd_handle():
             'q': ' '.join([brewery, name])
         })
         resp = await self.make_request(url, params)
+
         best_match_id = None
         best_match_count = 0
         best_match_negativ_count = 100
@@ -57,11 +58,14 @@ class untappd_handle():
             for beer in resp['beers']['items']:
                 matches = ([x for x in name.split(' ') if
                             x in beer['beer']['beer_name'].lower()])
+
                 neg_matches = ([x for x in beer['beer']['beer_name'].split()
                                 if x.lower() not in name])
-                if (brewery in beer['brewery']['brewery_name'] and
+
+                if (brewery in beer['brewery']['brewery_name'].lower() and
                         len(matches) > best_match_count and
                         len(neg_matches) < best_match_negativ_count):
+
                     best_match_count = len(matches)
                     best_match_negativ_count = len(neg_matches)
                     best_match_id = beer['beer']['bid']
