@@ -1,0 +1,11 @@
+README.md
+setup.py
+beerbolaget/__init__.py
+beerbolaget/beer.py
+beerbolaget/common.py
+beerbolaget/rating.py
+beerbolaget.egg-info/PKG-INFO
+beerbolaget.egg-info/SOURCES.txt
+beerbolaget.egg-info/dependency_links.txt
+beerbolaget.egg-info/requires.txt
+beerbolaget.egg-info/top_level.txt

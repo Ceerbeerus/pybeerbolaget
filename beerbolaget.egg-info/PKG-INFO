@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: beerbolaget
+Version: 0.1.7
+Summary: A python package to get information about the latest beer available at Systembolaget.
+Home-page: https://github.com/Ceerbeerus/pybeerbolaget
+Author: Robert Kallin
+Author-email: kallin.roberts@gmail.com
+License: UNKNOWN
+Description: A python package to get information about the latest beer available at Systembolaget.
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
