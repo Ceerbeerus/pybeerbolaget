@@ -40,8 +40,6 @@ class untappd_handle():
             rating = await self.get_beer_rating(beer_id)
             if rating:
                 rating = round(rating, 2)
-        else:
-            rating = 10
         return rating
 
     async def get_beer_id(self, brewery, name):
