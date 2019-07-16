@@ -1,5 +1,5 @@
 ﻿import json
-from beerbolaget.ha_custom import common, rating
+from beerbolaget import common, rating
 
 
 class beer_handler():
