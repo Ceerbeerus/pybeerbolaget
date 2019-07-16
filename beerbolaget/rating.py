@@ -78,7 +78,8 @@ class untappd_handle():
                        str(beer_id), '?%s'])
         params = urllib.parse.urlencode({
             'client_id': self.client_id,
-            'client_secret': self.client_secret
+            'client_secret': self.client_secret,
+            'compact': 'true'
         })
         resp = await self.make_request(url, params)
         beer_rating = None
