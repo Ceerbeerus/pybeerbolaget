@@ -28,6 +28,9 @@ class beer_handler():
         if self.release:
             beer_available = await common.get_beverage(self.api_key,
                                                        self.release)
+            # Clear previous beer list
+            self.beers.clear()
+
             for item in beer_available:
                 available_in_store = False
                 if (self.store_id and
