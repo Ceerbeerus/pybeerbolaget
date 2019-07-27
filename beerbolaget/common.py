@@ -46,7 +46,7 @@ async def get_images(release_date, image_url, type='Öl'):
 
 async def get_latest_release(api_key, type='Öl'):
     SellStartDateFrom = date.today() - timedelta(days=31)
-    SellStartDateTo = date.today() + timedelta(days=31)
+    SellStartDateTo = date.today() + timedelta(days=4)
     latest = None
     url = 'https://api-extern.systembolaget.se/product/v1/product/search?%s'
     params = urllib.parse.urlencode({
