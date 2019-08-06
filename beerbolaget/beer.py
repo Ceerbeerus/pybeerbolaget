@@ -4,7 +4,7 @@ from beerbolaget import common, rating
 
 class beer_handler():
     def __init__(self, api_key, image_url, ratebeer, store,
-                 untappd_client, untappd_secret):
+                 untappd_client, untappd_secret, untappd_token):
         self.api_key = api_key
         self.beers = {}
         self.chosen_store = store
@@ -14,7 +14,8 @@ class beer_handler():
         self.store_name = None
         self.store_id = None
         self.untappd_handle = rating.untappd_handle(untappd_client,
-                                                    untappd_secret)
+                                                    untappd_secret,
+                                                    untappd_token)
 
     async def get_store_info(self):
         if self.chosen_store:
@@ -60,7 +61,9 @@ class beer_handler():
                 brewery = self.beers[beer].brewery
                 name = self.beers[beer].name
                 detailed_name = self.beers[beer].detailed_name
-                self.beers[beer].untappd_rating = (
+                (self.beers[beer].untappd_rating,
+                 self.beers[beer].untappd_checked_in,
+                 self.beers[beer].untappd_rating_by_user) = (
                     await self.untappd_handle.get_rating(brewery,
                                                          name,
                                                          detailed_name))
@@ -91,6 +94,8 @@ class beer():
         self.image = None
         self.name = name
         self.price = price
+        self.untappd_checked_in = None
         self.untappd_rating = None
+        self.untappd_rating_by_user = None
         self.show_availability = show_availability
         self.type = type

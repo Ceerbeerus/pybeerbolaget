@@ -5,12 +5,15 @@ import requests
 
 
 class untappd_handle():
-    def __init__(self, client_id, secret):
+    def __init__(self, client_id, secret, token):
         self.client_id = client_id
         self.client_secret = secret
+        self.token = token
 
     async def get_rating(self, brewery, name, detailed_name):
+        have_had = None
         rating = None
+        rating_by_user = None
         brewery = brewery.lower()
         name = name.lower()
         if 'the' != brewery.split(' ')[0]:
@@ -37,10 +40,12 @@ class untappd_handle():
             beer_id = await self.get_beer_id(brewery, beer_name)
 
         if beer_id:
-            rating = await self.get_beer_rating(beer_id)
+            (rating,
+             have_had,
+             rating_by_user) = await self.get_beer_rating(beer_id)
             if rating:
                 rating = round(rating, 2)
-        return rating
+        return (rating, have_had, rating_by_user)
 
     async def get_beer_id(self, brewery, name):
         url = 'https://api.untappd.com/v4/search/beer?%s'
@@ -76,18 +81,28 @@ class untappd_handle():
     async def get_beer_rating(self, beer_id):
         url = ''.join(['https://api.untappd.com/v4/beer/info/',
                        str(beer_id), '?%s'])
-        params = urllib.parse.urlencode({
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-            'compact': 'true'
-        })
+        if self.token:
+            params = urllib.parse.urlencode({
+                'access_token': self.token,
+                'compact': 'true'
+            })
+        else:
+            params = urllib.parse.urlencode({
+                'client_id': self.client_id,
+                'client_secret': self.client_secret,
+                'compact': 'true'
+            })
         resp = await self.make_request(url, params)
         beer_rating = None
+        have_had = None
+        rating_by_user = None
         try:
             beer_rating = resp['beer']['rating_score']
+            have_had = (resp['beer']['stats']['user_count'] > 0)
+            rating_by_user = resp['beer']['auth_rating']
         except Exception as e:
             print("Could not read beer rating from response: ({})".format(e))
-        return beer_rating
+        return (beer_rating, have_had, rating_by_user)
 
     async def make_request(self, url, params):
         headers = {
