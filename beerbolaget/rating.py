@@ -16,16 +16,20 @@ class untappd_handle():
         rating_by_user = None
         brewery = brewery.lower()
         name = name.lower()
-        if 'the' != brewery.split(' ')[0]:
-            brewery = brewery.split(' ')[0]
-        else:
-            brewery = brewery.split(' ')[1]
+        name_check = brewery.split(' ')
+        if 'the' == name_check[0]:
+            del name_check[0]
+        brewery = name_check[0]
         if detailed_name:
             detailed_name = detailed_name.lower()
         beer_name = name
-        if (detailed_name and brewery in name and
-                brewery not in detailed_name):
+        if (detailed_name and name_check[0] in name and
+            name_check[0] not in detailed_name):
             beer_name = detailed_name
+        elif (detailed_name and name_check[0] not in name and
+              name_check[0] not in detailed_name):
+            beer_name += ' ' + detailed_name
+
         beer_name = re.sub(r'\d+', '', beer_name)
         beer_id = await self.get_beer_id(brewery, beer_name)
         if not beer_id and len(beer_name.split(' ')) > 1:
