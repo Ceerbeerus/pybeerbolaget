@@ -24,7 +24,7 @@ class untappd_handle():
             detailed_name = detailed_name.lower()
         beer_name = name
         if (detailed_name and name_check[0] in name and
-            name_check[0] not in detailed_name):
+                name_check[0] not in detailed_name):
             beer_name = detailed_name
         elif (detailed_name and name_check[0] not in name and
               name_check[0] not in detailed_name):
@@ -71,13 +71,16 @@ class untappd_handle():
                 neg_matches = ([x for x in beer['beer']['beer_name'].split()
                                 if x.lower() not in name])
 
-                if (brewery in beer['brewery']['brewery_name'].lower() and
-                        len(matches) > best_match_count and
-                        len(neg_matches) < best_match_negativ_count):
+                if ((len(matches) > best_match_count or (len(matches) > 0 and
+                     len(matches) == best_match_count and
+                        len(neg_matches) < best_match_negativ_count)) and
+                    (len(resp['beers']['items']) < 2 or
+                        brewery in beer['brewery']['brewery_name'].lower())):
 
                     best_match_count = len(matches)
                     best_match_negativ_count = len(neg_matches)
                     best_match_id = beer['beer']['bid']
+
         except Exception as e:
             print("Could not read beer id from response: ({})".format(e))
         return best_match_id
