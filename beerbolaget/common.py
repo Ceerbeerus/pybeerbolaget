@@ -52,7 +52,7 @@ async def get_latest_release(api_key, type='Öl'):
     params = urllib.parse.urlencode({
         # Request parameters
         'SubCategory': type,
-        'AssortmentText': 'Små partier',
+        'AssortmentText': 'Tillfälligt sortiment',
         'SortDirection': '1',
         'SortBy': '6',
         'SellStartDateFrom': SellStartDateFrom,
