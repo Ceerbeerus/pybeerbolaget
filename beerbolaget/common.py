@@ -9,7 +9,7 @@ async def get_beverage(api_key, release_date, type='Öl'):
     params = urllib.parse.urlencode({
         # Request parameters
         'SubCategory': type,
-        'AssortmentText': 'Små partier',
+        'AssortmentText': 'Tillfälligt sortiment',
         'SellStartDateFrom': release_date,
         'SellStartDateTo': release_date,
     })
@@ -25,7 +25,7 @@ async def get_images(release_date, image_url, type='Öl'):
     params = urllib.parse.urlencode({
         # Request parameters
         'SubCategory': type,
-        'AssortmentText': 'Små partier',
+        'AssortmentText': 'Tillfälligt sortiment',
         'SellStartDateFrom': release_date,
         'SellStartDateTo': release_date,
     })
