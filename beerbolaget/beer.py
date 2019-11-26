@@ -77,7 +77,10 @@ class beer_handler():
         return json.dumps(beers, ensure_ascii=False)
 
     async def get_release(self):
-        return self.release.split('T')[0]
+        if self.release:
+            return self.release.split('T')[0]
+        else:
+            return "No release could be found."
 
     async def get_store(self):
         return self.store_name
