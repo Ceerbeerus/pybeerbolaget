@@ -45,6 +45,7 @@ class beer_handler():
                                 item['Type'],
                                 item['Price'],
                                 item['Country'],
+                                item['SellStartDate'],
                                 show_availability=(self.store_id is not None))
                 self.beers[item['ProductId']] = new_beer
 
@@ -74,7 +75,7 @@ class beer_handler():
             beers.append(self.beers[beer].__dict__)
         if len(beers) > 0:
             beers = sorted(beers, key=lambda k: k['id'])
-        return json.dumps(beers, ensure_ascii=False)
+        return beers
 
     async def get_release(self):
         if self.release:
@@ -88,7 +89,7 @@ class beer_handler():
 
 class beer():
     def __init__(self, availability_local, brewery, id, name, detailed_name,
-                 type, price, country, show_availability=False):
+                 type, price, country, release, show_availability=False):
         self.availability_local = availability_local
         self.brewery = brewery
         self.country = country
@@ -97,6 +98,7 @@ class beer():
         self.image = None
         self.name = name
         self.price = price
+        self.release_date = release
         self.untappd_checked_in = None
         self.untappd_rating = None
         self.untappd_rating_by_user = None

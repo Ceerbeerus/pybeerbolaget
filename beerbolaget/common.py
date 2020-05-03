@@ -1,16 +1,18 @@
-﻿from datetime import date, timedelta
+﻿from datetime import date, datetime, timedelta
 import urllib.parse
 
 import requests
 
 
 async def get_beverage(api_key, release_date, type='Öl'):
+    SellStartDateFrom = datetime.strptime(release_date, '%Y-%m-%dT00:00:00').date()
+    SellStartDateFrom -= timedelta(days=5)
     url = 'https://api-extern.systembolaget.se/product/v1/product/search?%s'
     params = urllib.parse.urlencode({
         # Request parameters
         'SubCategory': type,
         'AssortmentText': 'Tillfälligt sortiment',
-        'SellStartDateFrom': release_date,
+        'SellStartDateFrom': SellStartDateFrom,
         'SellStartDateTo': release_date,
     })
     beverages = await make_request(api_key, url, params)
@@ -18,6 +20,8 @@ async def get_beverage(api_key, release_date, type='Öl'):
 
 
 async def get_images(release_date, image_url, type='Öl'):
+    SellStartDateFrom = datetime.strptime(release_date, '%Y-%m-%dT00:00:00').date()
+    SellStartDateFrom -= timedelta(days=5)
     url = image_url + '/?%s'
     headers = {
         'content-type': 'application/json'
@@ -26,7 +30,7 @@ async def get_images(release_date, image_url, type='Öl'):
         # Request parameters
         'SubCategory': type,
         'AssortmentText': 'Tillfälligt sortiment',
-        'SellStartDateFrom': release_date,
+        'SellStartDateFrom': SellStartDateFrom,
         'SellStartDateTo': release_date,
     })
     images = []

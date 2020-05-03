@@ -1,6 +1,6 @@
 import re
 import urllib.parse
-
+import json
 import requests
 
 
@@ -120,5 +120,51 @@ class untappd_handle():
             resp = requests.get(url % params, headers=headers,
                                 verify=True).json()['response']
         except Exception as e:
-            print("Could not fetch data from untappd api:  ({})".format(e))
+            print("Could not fetch data from untappd api: ({})".format(e))
         return resp
+
+class oauth():
+    def __init__(self, cache, callback_url, client_id, client_secret):
+        self.cache = cache
+        self.callback_url = callback_url
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+    def get_token_from_cache(self):
+        try:
+            f = open(self.cache, 'r')
+            token = f.read()
+            f.close()
+            return json.loads(token)
+        except:
+            return None
+
+    def cache_token(self, code):
+        # Get token
+        payload = {
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
+            'response_type': 'code',
+            'redirect_url': self.callback_url,
+            'code': code
+        }
+
+        response = requests.get('https://untappd.com/oauth/authorize/', params=payload)
+
+        if response:
+            token = response.json()['access_token']
+            f = open(self.cache, 'w')
+            f.write(json.dumps(token))
+            f.close()
+        else:
+            print("Couldn't save token.")
+
+    def get_url(self):
+        payload = {
+                'client_id': self.client_id,
+                'response_type': 'code',
+                'redirect_url': self.callback_url,
+            }
+        return '{0}?{1}'.format('https://untappd.com/oauth/authenticate/',
+                                urllib.parse.urlencode(payload))
+
