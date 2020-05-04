@@ -148,14 +148,17 @@ class oauth():
             'redirect_url': self.callback_url,
             'code': code
         }
+        headers = {'User-agent': 'beerbolaget/untappd-int'}
+        response = requests.get('https://untappd.com/oauth/authorize/', params=payload, headers=headers)
 
-        response = requests.get('https://untappd.com/oauth/authorize/', params=payload)
-
-        if response:
-            token = response.json()['access_token']
-            f = open(self.cache, 'w')
-            f.write(json.dumps(token))
-            f.close()
+        if response.status_code == requests.codes.ok:
+            try:
+                token = response.json().get('response').get('access_token')
+                f = open(self.cache, 'w')
+                f.write(json.dumps(token))
+                f.close()
+            except Exception as e:
+                print("Could not read response: ({})".format(e))
         else:
             print("Couldn't save token.")
 
