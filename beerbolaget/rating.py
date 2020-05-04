@@ -10,7 +10,7 @@ class untappd_handle():
         self.client_secret = secret
         self.token = token
 
-    async def get_rating(self, brewery, name, detailed_name):
+    def get_rating(self, brewery, name, detailed_name):
         have_had = None
         rating = None
         rating_by_user = None
@@ -31,7 +31,7 @@ class untappd_handle():
             beer_name += ' ' + detailed_name
 
         beer_name = re.sub(r'\d+', '', beer_name)
-        beer_id = await self.get_beer_id(brewery, beer_name)
+        beer_id = self.get_beer_id(brewery, beer_name)
         if not beer_id and len(beer_name.split(' ')) > 1:
             beer_name = beer_name.split(' ')
             if (len(beer_name[0]) < 4 or brewery in beer_name[0]):
@@ -41,24 +41,24 @@ class untappd_handle():
                     beer_name = beer_name[1]
             else:
                 beer_name = beer_name[0]
-            beer_id = await self.get_beer_id(brewery, beer_name)
+            beer_id = self.get_beer_id(brewery, beer_name)
 
         if beer_id:
             (rating,
              have_had,
-             rating_by_user) = await self.get_beer_rating(beer_id)
+             rating_by_user) = self.get_beer_rating(beer_id)
             if rating:
                 rating = round(rating, 2)
         return (rating, have_had, rating_by_user)
 
-    async def get_beer_id(self, brewery, name):
+    def get_beer_id(self, brewery, name):
         url = 'https://api.untappd.com/v4/search/beer?%s'
         params = urllib.parse.urlencode({
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             'q': ' '.join([brewery, name])
         })
-        resp = await self.make_request(url, params)
+        resp = self.make_request(url, params)
 
         best_match_id = None
         best_match_count = 0
@@ -85,7 +85,7 @@ class untappd_handle():
             print("Could not read beer id from response: ({})".format(e))
         return best_match_id
 
-    async def get_beer_rating(self, beer_id):
+    def get_beer_rating(self, beer_id):
         url = ''.join(['https://api.untappd.com/v4/beer/info/',
                        str(beer_id), '?%s'])
         if self.token:
@@ -99,7 +99,7 @@ class untappd_handle():
                 'client_secret': self.client_secret,
                 'compact': 'true'
             })
-        resp = await self.make_request(url, params)
+        resp = self.make_request(url, params)
         beer_rating = None
         have_had = None
         rating_by_user = None
@@ -111,7 +111,7 @@ class untappd_handle():
             print("Could not read beer rating from response: ({})".format(e))
         return (beer_rating, have_had, rating_by_user)
 
-    async def make_request(self, url, params):
+    def make_request(self, url, params):
         headers = {
             'content-type': 'application/json'
         }

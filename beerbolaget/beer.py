@@ -17,18 +17,18 @@ class beer_handler():
                                                     untappd_secret,
                                                     untappd_token)
 
-    async def get_store_info(self):
+    def get_store_info(self):
         if self.chosen_store:
             (self.store_id,
-             self.store_name) = await common.get_store_info(self.api_key,
-                                                            self.chosen_store)
+             self.store_name) = common.get_store_info(self.api_key,
+                                                      self.chosen_store)
 
-    async def update_new_beers(self):
-        self.release = await common.get_latest_release(self.api_key)
+    def update_new_beers(self):
+        self.release = common.get_latest_release(self.api_key)
 
         if self.release:
-            beer_available = await common.get_beverage(self.api_key,
-                                                       self.release)
+            beer_available = common.get_beverage(self.api_key,
+                                                 self.release)
             # Clear previous beer list
             self.beers.clear()
 
@@ -49,14 +49,14 @@ class beer_handler():
                                 show_availability=(self.store_id is not None))
                 self.beers[item['ProductId']] = new_beer
 
-    async def get_images(self):
+    def get_images(self):
         if self.image_url and len(self.beers) > 0:
-            images = await common.get_images(self.release, self.image_url)
+            images = common.get_images(self.release, self.image_url)
             for beer in self.beers:
                 if beer in images:
                     self.beers[beer].image = images[beer]['ImageUrl']
 
-    async def get_ratings(self):
+    def get_ratings(self):
         if self.untappd_handle.client_id and len(self.beers) > 0:
             for beer in self.beers:
                 brewery = self.beers[beer].brewery
@@ -65,11 +65,11 @@ class beer_handler():
                 (self.beers[beer].untappd_rating,
                  self.beers[beer].untappd_checked_in,
                  self.beers[beer].untappd_rating_by_user) = (
-                    await self.untappd_handle.get_rating(brewery,
-                                                         name,
-                                                         detailed_name))
+                    self.untappd_handle.get_rating(brewery,
+                                                   name,
+                                                   detailed_name))
 
-    async def get_beers(self):
+    def get_beers(self):
         beers = []
         for beer in self.beers:
             beers.append(self.beers[beer].__dict__)
@@ -77,13 +77,13 @@ class beer_handler():
             beers = sorted(beers, key=lambda k: k['id'])
         return beers
 
-    async def get_release(self):
+    def get_release(self):
         if self.release:
             return self.release.split('T')[0]
         else:
             return "No release could be found."
 
-    async def get_store(self):
+    def get_store(self):
         return self.store_name
 
 
