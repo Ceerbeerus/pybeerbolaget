@@ -71,10 +71,12 @@ class untappd_handle():
                 neg_matches = ([x for x in beer['beer']['beer_name'].split()
                                 if x.lower() not in name])
 
-                if ((len(matches) > best_match_count or (len(matches) > 0 and
+                if (((len(matches) > best_match_count or (len(matches) > 0 and
                      len(matches) == best_match_count and
                         len(neg_matches) < best_match_negativ_count)) and
                     (len(resp['beers']['items']) < 2 or
+                        brewery in beer['brewery']['brewery_name'].lower())) or
+                    (len(resp['beers']['items']) == 1 and
                         brewery in beer['brewery']['brewery_name'].lower())):
 
                     best_match_count = len(matches)
